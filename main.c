@@ -563,7 +563,7 @@ int main(void)
 							{
 								if(y>v)
 											{
-												MDR_TMR3->CH4_CNTRL1 &=  ~TIMER_CH_CNTRL1_NINV;
+			MDR_TMR3->CH4_CNTRL1 &=  ~TIMER_CH_CNTRL1_NINV;
 												TIMER_SetChnCompare(MDR_TMR3, TIMER_CHANNEL4, 19800-b);
 												TIMER_SetChnCompare1(MDR_TMR3, TIMER_CHANNEL4, 19800+b);
 											
