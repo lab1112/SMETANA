@@ -8,7 +8,6 @@
 #include "mdr32f8_ssp.h"
 #include "mdr32f8_tim.h"
 
-
 PORT_InitTypeDef PORT_InitStructure;
 MIL_STD_1553_InitTypeDef MIL_STD_15531_InitStructure;
 SSP_InitTypeDef SSP_InitStructure;
@@ -16,13 +15,10 @@ TIMER_CntInitTypeDef sTIM_CntInit;
 TIMER_ChnInitTypeDef sTIM_ChnInit;
 TIMER_ChnOutInitTypeDef sTIM_ChnOutInit;
 
-
-
 void Delay(__IO uint32_t nCount)
 {
   for (; nCount != 0; nCount--);
 }
-
 
 int main(void)
 {
@@ -59,7 +55,6 @@ int main(void)
   float v=0;//текущий угол поворота по вертикали в градусах
   float g1=0;//текущий угол поворота по горизонтали с датчика
   float v1=0;//текущий угол поворота по вертикали с датчика
-  
 	
   //данные для инициализации преобразователя сигналов датчика
   uint16_t massAdrData[11][3]=
@@ -433,10 +428,8 @@ int main(void)
     g1 = SSP_ReceiveData(MDR_SSP0);
 
     //перевод текущих значений углов в градусы
-    if(g1<36864)
-      g=(g1-4164)/793;
-    else
-      g=(g1-65535-4164)/793;
+    if(g1<36864)    g=(g1-4164)/793;
+    else            g=(g1-65535-4164)/793;
 
     v=(20928-v1)/966;
 
@@ -445,21 +438,16 @@ int main(void)
     dataGetUK[1]=v;
     MIL_STD_1553_WiteDataToSendBuffer(MIL_STD_15531,1,4,(uint16_t *) massData);
 	
-	
-    if(x==x1)
-      ia=ia;
-    else
-      ia=0;
+    if(x==x1)    ia=ia;
+    else         ia=0;
 
-    if(y==y1)
-      ib=ib;
-    else
-      ib=0;
+    if(y==y1)    ib=ib;
+    else         ib=0;
     //вычисление рассогласования углов
     da=g-x;
     db=v-y;
 	//вычисление производных рассогласования
-    dda=(da-da1)/0.001;
+    dda=(da-da1)/0.001;  // ГЫЫЫ *1000
     ddb=(db-db1)/0.001;
     da1=da;
     db1=db;
@@ -469,29 +457,20 @@ int main(void)
 	
     ia=ia+da*0.001;
     ib=ib+db*0.001;
-    if (pa>0)
-      a=pa*1000;
-    else
-      a=-pa*1000;
+    if (pa>0) a=pa*1000;
+    else      a=-pa*1000;
 
-    if (a>10000)
-      a=10000;
-    else
-      a=a;
+    if (a>10000) a=10000;
+    else         a=a;
 
-    if (pb>0)
-      b=pb*1000;
-    else
-      b=-pb*1000;
+    if (pb>0)   b=pb*1000;
+    else        b=-pb*1000;
 
-    if (b>10000)
-      b=10000;
-    else
-      b=b;
+    if (b>10000) b=10000;
+    else         b=b;
 
     x1=x;
     y1=y;
-
 
     //сигналы управления двигателем 1
     if(x<g)  //движение вправо
@@ -503,12 +482,7 @@ int main(void)
       MDR_TMR3->CH2_CNTRL1 &=  ~TIMER_CH_CNTRL1_NINV;
       TIMER_SetChnCompare(MDR_TMR3, TIMER_CHANNEL2, 20000-a);
       TIMER_SetChnCompare1(MDR_TMR3, TIMER_CHANNEL2, 20000+a);
-
-
-    }
-
-    else
-    {
+    }else{
       if(x>g)  //движение влево
       {
         MDR_TMR3->CH1_CNTRL1 &=  ~TIMER_CH_CNTRL1_NINV;
@@ -520,17 +494,12 @@ int main(void)
           MDR_TMR3->CH2_CNTRL1 |= TIMER_CH_CNTRL1_NINV;
           TIMER_SetChnCompare(MDR_TMR3, TIMER_CHANNEL2, a-200);
           TIMER_SetChnCompare1(MDR_TMR3, TIMER_CHANNEL2, 39800-a);
-        }
-        else
-        {
+        }else{
           MDR_TMR3->CH2_CNTRL1 &=  ~TIMER_CH_CNTRL1_NINV;
           TIMER_SetChnCompare(MDR_TMR3, TIMER_CHANNEL2, 39800-a);
           TIMER_SetChnCompare1(MDR_TMR3, TIMER_CHANNEL2, 39800+a);
         }
-
-      }
-      else //неподвижное состояние
-      {
+      }else{ //неподвижное состояние !!!!!!!!!!!!! Это что? отруб сигналов?
         MDR_TMR3->CH1_CNTRL1 &=  ~TIMER_CH_CNTRL1_NINV;				
         TIMER_SetChnCompare(MDR_TMR3, TIMER_CHANNEL1, 0);
         TIMER_SetChnCompare1(MDR_TMR3, TIMER_CHANNEL1, 0);
@@ -539,7 +508,6 @@ int main(void)
         TIMER_SetChnCompare1(MDR_TMR3, TIMER_CHANNEL2, 20000);
       }
     }
-
 
     //сигналы управления двигателем 2
     if(y<v) //движение вверх
